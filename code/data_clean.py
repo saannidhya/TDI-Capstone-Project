@@ -17,7 +17,8 @@ root = "/Users/saannidhyarawat/Desktop/Projects/TDI/TDI capstone"
 
 os.chdir(root+'/data')
 
-df = pd.read_csv('df_all_jobs.csv')
+# df = pd.read_csv('df_all_jobs.csv')
+df = pd.read_csv('df_data_science_jobs.csv')
 
 df.head()
 
