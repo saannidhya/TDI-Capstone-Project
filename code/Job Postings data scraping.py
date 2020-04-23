@@ -85,7 +85,7 @@ for city, state in zip(city_key, city_val): # For each city in the dictionary
                 except Exception as e:
                     job_summary = None  # Return None if it doesn't exist
 
-                if (title, company_name, company_address, salary, job_summary) not in jobs:
+                if (title, company_name, company_address, salary, job_summary) not in jobs_info:
                     jobs_info.append((title, company_name, company_address, salary, job_summary))
                     # print(f'full job posting - title: {title}, company:{company_name}, salary: {salary}')
 
