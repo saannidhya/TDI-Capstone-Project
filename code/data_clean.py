@@ -1,9 +1,11 @@
 # Name: Saani
+# Date: 25th April 2020
 # Title: TDI Capstone clean-data
 # Purpose: Clean scraped data
-# Inputs:
-# Outputs:
+# Inputs: 1. df_data_science_jobs.csv
+# Outputs: 1.
 # Dependencies:
+# 1.
 
 # Importing libraries
 import os
@@ -20,30 +22,32 @@ os.chdir(root+'/data')
 # df = pd.read_csv('df_all_jobs.csv')
 df = pd.read_csv('df_data_science_jobs.csv')
 
-df.head()
+# len(df)
+# df.head()
 
 # Renaming columns
 cols = {'Unnamed: 0':'id', '0': 'Job_Title', '1':'Company', '2': 'Company_Address', '3': 'Salary','4': 'Job_Summary'}
 df = df.rename(columns=cols)
-# Total rows = 186,497
+# Total rows = 8,267
 
 # Removing rows with missing salary information
 sal_boolean = df['Salary'].isna()
 df_sal = df.loc[~sal_boolean, :]
 print(len(df) - len(df_sal))
-# Removed rows = 104,927
+# Removed rows = 7,019
+# Remaining rows with Salary info: 1,248
 
 # Removing rows with no company address
 address_boolean = df['Company_Address'].isna()
 df_comp_address = df_sal.loc[~address_boolean, :]
 print(len(df_sal) - len(df_comp_address))
-# Removed rows = 19,181
+# Removed rows = 0
 
 # Clearing all rows which contain duplicate
 df_2 = df_comp_address.loc[~(df_comp_address[['Job_Title', 'Company', 'Company_Address', 'Salary', 'Job_Summary']].duplicated()), :]
 print(len(df_2))
 print(len(df_comp_address) - len(df_2))
-# Removed rows = 50,403
+# Removed rows = 0
 
 # Cleaning salary column
 
@@ -58,7 +62,9 @@ for i in list(cols.values())[1:]:
 # Storing different salary types
 df_2['Sal_type'] = df_2['Salary'].apply(lambda x: str(x).split(' ')[-1])
 
-df_2['Sal_type'].unique()
+sal_types = ['year', 'hour', 'month', 'week', 'day']
+
+df_2 = df_2.loc[df_2['Sal_type'].isin(sal_types), :]
 
 # Storing salary cap (max salary for ranges)
 # x = df_2.copy()
@@ -67,8 +73,8 @@ df_2['Sal_cap'] = df_2['Salary'].apply(lambda x: str(x).split(' ')[-3].replace('
 # Outliers
 # One unique observation that pays per session. Because it is only one obs and I do not want to treat it differently. Solution: remove obs
 # Also, One unique observation paying 'per flight hour'. removing this observation
-df_2 = df_2.loc[~((df_2['Sal_type'] == 'session') | (df_2['Sal_cap'] == 'per')), :].reset_index(drop=True)
-len(df_2)
+# df_2 = df_2.loc[~((df_2['Sal_type'] == 'session') | (df_2['Sal_cap'] == 'per')), :].reset_index(drop=True)
+# len(df_2)
 
 # giving salary caps appropriate treatment (based on sal type or duration) (Converting into annual salary)
 # Converting all monthly, hourly, and weekly salaries into yearly
@@ -88,8 +94,13 @@ df_2.loc[(week_bool), 'Annual_Salary'] = df_2.loc[week_bool, 'Sal_cap'].apply(la
 day_bool = df_2['Sal_type'] == 'day'
 df_2.loc[(day_bool), 'Annual_Salary'] = df_2.loc[day_bool, 'Sal_cap'].apply(lambda x: float(x) * 5 * 52) # Working 5 days a week, for 52 weeks
 
-max(df_2['Annual_Salary'])
-min(df_2['Annual_Salary'])
+
+# df_2_srtd = df_2.sort_values(by='Annual_Salary', ascending=False)
+# max(df_2['Annual_Salary'])
+# min(df_2['Annual_Salary'])
+del(df_2['Sal_type'])
+del(df_2['Sal_cap'])
+del(df_2['Salary'])
 
 
 # To-do:
@@ -103,3 +114,12 @@ df_2.loc[~(address_boolean), 'Company_State'] = df_2.loc[~(address_boolean), 'Co
 df_2.loc[(address_boolean), 'Company_State'] = df_2.loc[(address_boolean), 'Company_Address'].apply(lambda x: str(x).split(',')[1].strip().split(' ')[0])
 
 
+df_2['Company_city'] = df_2.loc[:, 'Company_Address'].apply(lambda x: str(x).split(',')[0].strip())
+
+df_2.reset_index(drop = True)
+
+# Output
+
+df_2.to_csv("df_clean.csv", index=False)
+os.chdir(root)
+os.getcwd()

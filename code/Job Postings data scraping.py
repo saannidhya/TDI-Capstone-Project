@@ -2,9 +2,11 @@
 # Purpose: To extract data from Indeed's website using bs4 python module for TDI Capstone Project
 # Created by: Saani Rawat
 # Last modifed: 04/23/2020
-# Data last scraped on: 04/23/2020, 2:00pm
+# 1. Data last scraped on: 04/23/2020, 2:00pm
+# 2. Data last scraped on: 04/26/2020, 5:00pm
+
 # Output:
-# 1.df_all_jobs.csv
+# 1.df_data_science_jobs.csv
 
 from bs4 import BeautifulSoup
 import requests
@@ -21,6 +23,14 @@ start_time = datetime.now()
 root = "/Users/saannidhyarawat/Desktop/Projects/TDI/TDI capstone"
 os.chdir(root+"/code")
 
+# Importing existing scraped df
+os.chdir(root+'/data')
+df = pd.read_csv('df_data_science_jobs.csv')
+os.chdir(root+"/code")
+
+# Existing rows to list
+jobs_info = df.values.tolist()
+
 titles = ["data%20scientist", "quantitative%20analyst", "data%20analyst", "data%20engineer", "quant", "machine%20learning"]
 
 cities = {"San+Francisco":"CA", "Charlotte":"NC", "New+York+City":"NY", "Boston":"MA", "Chicago":"IL", "Houston":"TX",
@@ -31,7 +41,7 @@ cities = {"San+Francisco":"CA", "Charlotte":"NC", "New+York+City":"NY", "Boston"
 city_key = list(cities.keys())
 city_val = list(cities.values())
 
-jobs_info = []
+# jobs_info = []
 for city, state in zip(city_key, city_val): # For each city in the dictionary
     for title in titles:
         # print(f'city: {city}, state: {state}')
@@ -92,7 +102,14 @@ for city, state in zip(city_key, city_val): # For each city in the dictionary
 
 df_jobs = pd.DataFrame(jobs_info)
 os.chdir(root+'/data')
-df_jobs.to_csv("df_data_science_jobs.csv")
+
+if not os.path.isfile('df_data_science_jobs.csv'):
+   df_jobs.to_csv('df_data_science_jobs.csv', mode='w')
+else: # else it exists so append without writing the header
+   df_jobs.to_csv('df_data_science_jobs.csv', mode='a', header=False)
+
+#df_jobs.to_csv("df_data_science_jobs.csv", mode='a', index=False)
+
 os.chdir(root)
 
 end_time = datetime.now()
