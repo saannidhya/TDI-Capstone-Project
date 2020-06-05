@@ -1,0 +1,14 @@
+backports.shutil-get-terminal-size==1.0.0
+beautifulsoup4==4.6.0
+excalibur-py==0.4.2
+fastcache==1.0.2
+filelock==3.0.12
+Flask==1.1.1
+Flask-Compress==1.4.0
+Flask-Cors==3.0.3
+Flask-SQLAlchemy==2.4.1
+matplotlib==2.1.0
+pandas==1.0.0
+gunicorn==19.9.0
+plotly==4.5.1
+requests==2.18.4
